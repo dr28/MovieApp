@@ -15,8 +15,8 @@ protocol ApiResource {
 
 extension ApiResource {
     var url: URL {
-        let baseUrl = Constants.ApiResource.BaseUrl //"https://api.themoviedb.org/3/movie"
-        let apiKey = Constants.ApiResource.ApiKey //"api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed"
+        let baseUrl = Constants.ApiResource.BaseUrl
+        let apiKey = Constants.ApiResource.ApiKey
         
         let url = baseUrl + methodPath + "?" + apiKey
         
@@ -31,15 +31,15 @@ extension ApiResource {
 struct MoviesResource: ApiResource {
     typealias Model = MovieResults.Movie
     
-    let methodPath = Constants.ApiResource.MoviesResource.MethodPath //"/now_playing"
+    let methodPath = Constants.ApiResource.MoviesResource.MethodPath
 
     func makeModel(data: Data) -> [MovieResults.Movie] {
-        return try! MovieResults(data: data).results
+        return MovieResults(data: data).results
     }
 }
 
 struct TrailersResource: ApiResource {
-    var methodPath = Constants.ApiResource.TrailersResource.MethodPath //"/videos"
+    var methodPath = Constants.ApiResource.TrailersResource.MethodPath
     typealias Model = TrailerResults.Trailer
 
     init() {}
@@ -49,7 +49,7 @@ struct TrailersResource: ApiResource {
     }
     
     func makeModel(data: Data) -> [TrailerResults.Trailer] {
-        return try! TrailerResults(data: data).results
+        return TrailerResults(data: data).results
     }
 }
 

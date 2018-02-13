@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  MovieApp
 //
-//  Created by Ajith on 2/12/18.
+//  Created by Deepthy on 2/12/18.
 //  Copyright © 2018 Deepthy. All rights reserved.
 //
 

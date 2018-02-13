@@ -31,13 +31,12 @@ class MovieViewController: UIViewController {
         searchBar.delegate = self
         
         // set up the refresh control
-        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        refreshControl.attributedTitle = NSAttributedString(string: Constants.Refresh.Name)
         refreshControl.addTarget(self, action: #selector(refresh(sender:)), for: UIControlEvents.valueChanged)
         tableView.addSubview(refreshControl)
     }
     
     @objc func refresh(sender:AnyObject) {
-        
         fetchMovies()
 
         if refreshControl.isRefreshing {
@@ -47,6 +46,7 @@ class MovieViewController: UIViewController {
     
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
         coordinator.animate(alongsideTransition: { (_) in
+            
             self.tableView.reloadData()
             
         }, completion: .none)
@@ -55,14 +55,12 @@ class MovieViewController: UIViewController {
     }
     
     func fetchMovies() {
-        //ARSLineProgress.showWithPresentCompetionBlock {
         
         let moviesResource = MoviesResource()
         let moviesRequest = ApiRequest(resource: moviesResource)
         self.request = moviesRequest
         
         moviesRequest.load { [weak self] (movieList: [MovieResults.Movie]?) in
-            //self?.activityIndicator.stopAnimating()
             self?.movies = []
             
             for movie in movieList! {
@@ -70,13 +68,11 @@ class MovieViewController: UIViewController {
             }
             
             self?.tableView.reloadData()
-            //    ARSLineProgress.hide()
-            //}
         }
     }
     
     func fetchPoster(for url: String, posterImgView: UIImageView) {
-        let imgUrl = "http://image.tmdb.org/t/p/w500" + url
+        let imgUrl = Constants.Poster.BaseUrl + url
         
         guard let posterURL = URL(string: imgUrl) else {
             return
@@ -100,21 +96,16 @@ class MovieViewController: UIViewController {
     }
     
     func fetchTrailer(movieID: Int, cell : LandscapeCell) {
-        //ARSLineProgress.showWithPresentCompetionBlock {
-        
-        var trailerResource = TrailersResource(movie: String(movieID))
+        let trailerResource = TrailersResource(movie: String(movieID))
         let trailerRequest = ApiRequest(resource: trailerResource)
         self.request = trailerRequest
         
         trailerRequest.load { [weak self] (trailerList: [TrailerResults.Trailer]?) in
-            //self?.activityIndicator.stopAnimating()
-            
-            guard let trailerLists = trailerList else {
-                print("in guard ")
+            guard trailerList != nil else {
                 return
             }
             
-            let path = "https://www.youtube.com/embed/"
+            let path = Constants.Trailer.BaseUrl
             var url = URL(string: path)
             
             if let trailer = trailerList?.first {
@@ -143,7 +134,7 @@ extension MovieViewController : UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if UIDevice.current.orientation.isPortrait {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "PortraitCell", for: indexPath) as! PortraitCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.CellIdentifier.Portrait, for: indexPath) as! PortraitCell
             cell.movie = movies[indexPath.row]
             
             let posterpath = self.movies[indexPath.row].posterPath!
@@ -156,7 +147,7 @@ extension MovieViewController : UITableViewDataSource {
             return cell
         }
         else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "LandscapeCell", for: indexPath) as! LandscapeCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: Constants.CellIdentifier.LandScape, for: indexPath) as! LandscapeCell
             cell.movie = movies[indexPath.row]
             
             let movieID = String(movies[indexPath.row].id!)
@@ -186,13 +177,11 @@ extension MovieViewController : UISearchBarDelegate {
     
     private func filterTableView(text: String) {
         
-        //fix of not searching when backspacing
         let filteredMovies = movies.filter({ (movie: MovieResults.Movie) -> Bool in
             
             let matchFound = movie.title?.lowercased().contains(text.lowercased())
             return matchFound!
         })
-        print("filteredMovies \(filteredMovies.count)")
         
         if filteredMovies.count != 0 {
             movies = filteredMovies
@@ -212,7 +201,5 @@ extension MovieViewController : UISearchBarDelegate {
         searchBar.text = nil
         
         searchBar.endEditing(true)
-        // getMovies()
-        
     }
 }

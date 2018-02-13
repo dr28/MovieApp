@@ -46,14 +46,10 @@ class ApiRequest<Resource: ApiResource> {
 
 extension ApiRequest: NetworkRequest {
     func decode(_ data: Data) -> [Resource.Model]? {
-        print(" ApiRequest NetworkRequest decode")
-        
-        return resource.makeModel(data: data) as! [Resource.Model]
+        return resource.makeModel(data: data)
     }
     
     func load(withCompletion completion: @escaping ([Resource.Model]?) -> Void) {
-        print("ApiRequest NetworkRequest load")
-        
         load(resource.url, withCompletion: completion)
     }
 }
@@ -75,6 +71,3 @@ extension ImageRequest: NetworkRequest {
         load(url, withCompletion: completion)
     }
 }
-
-
-

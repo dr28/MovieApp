@@ -25,6 +25,7 @@ class LandscapeCell: UITableViewCell {
         super.prepareForReuse()
         movieTitle.text = ""
         movieOverview.text = ""
+        movieTrailerView.load(URLRequest(url: URL(string: Constants.Trailer.BaseUrl)!))
     }
     
     override func awakeFromNib() {
